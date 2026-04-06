@@ -3,6 +3,7 @@ import type { GitHubUser } from '@/types'
 
 defineProps<{
   user: GitHubUser
+  totalStars?: number
 }>()
 </script>
 
@@ -68,17 +69,22 @@ defineProps<{
       <!-- Stats -->
       <div class="flex gap-5 text-sm justify-center sm:justify-start">
         <div class="text-center">
-          <span class="block text-lg font-bold text-gray-900">{{ user.public_repos.toLocaleString() }}</span>
+          <span class="block text-lg font-bold text-gray-900 dark:text-gray-100">{{ user.public_repos.toLocaleString() }}</span>
           <span class="text-gray-400 text-xs">Repos</span>
         </div>
-        <div class="w-px bg-black/[0.06]"></div>
+        <div class="w-px bg-black/[0.06] dark:bg-white/[0.08]"></div>
+        <div v-if="totalStars !== undefined" class="text-center">
+          <span class="block text-lg font-bold text-gray-900 dark:text-gray-100">{{ totalStars.toLocaleString() }}</span>
+          <span class="text-gray-400 text-xs">Stars ★</span>
+        </div>
+        <div v-if="totalStars !== undefined" class="w-px bg-black/[0.06] dark:bg-white/[0.08]"></div>
         <div class="text-center">
-          <span class="block text-lg font-bold text-gray-900">{{ user.followers.toLocaleString() }}</span>
+          <span class="block text-lg font-bold text-gray-900 dark:text-gray-100">{{ user.followers.toLocaleString() }}</span>
           <span class="text-gray-400 text-xs">Followers</span>
         </div>
-        <div class="w-px bg-black/[0.06]"></div>
+        <div class="w-px bg-black/[0.06] dark:bg-white/[0.08]"></div>
         <div class="text-center">
-          <span class="block text-lg font-bold text-gray-900">{{ user.following.toLocaleString() }}</span>
+          <span class="block text-lg font-bold text-gray-900 dark:text-gray-100">{{ user.following.toLocaleString() }}</span>
           <span class="text-gray-400 text-xs">Following</span>
         </div>
       </div>

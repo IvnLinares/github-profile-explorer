@@ -1,2 +1,2 @@
-export { getUser, getRepos, getRepoLanguages } from './github'
+export { getUser, getRepos, getRepoLanguages, getActivity } from './github'
 export { githubFetch } from './api'

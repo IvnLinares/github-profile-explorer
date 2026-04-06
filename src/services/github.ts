@@ -1,6 +1,6 @@
 import { githubFetch } from './api'
 import { sessionCache } from '@/composables/useUtils'
-import type { GitHubUser, GitHubRepo, RepoLanguages, RepoQueryParams } from '@/types'
+import type { GitHubUser, GitHubRepo, RepoLanguages, RepoQueryParams, GitHubEvent } from '@/types'
 
 /**
  * Fetch a GitHub user profile by username.
@@ -44,6 +44,17 @@ export async function getRepoLanguages(
   return sessionCache(`langs:${owner}/${repo}`, () =>
     githubFetch<RepoLanguages>(
       `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/languages`,
+    ),
+  )
+}
+
+/**
+ * Fetch the last 15 public events for a user.
+ */
+export async function getActivity(username: string): Promise<GitHubEvent[]> {
+  return sessionCache(`activity:${username}`, () =>
+    githubFetch<GitHubEvent[]>(
+      `/users/${encodeURIComponent(username)}/events/public?per_page=15`,
     ),
   )
 }

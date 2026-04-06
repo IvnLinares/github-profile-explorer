@@ -12,16 +12,34 @@ export function useRepos(username: () => string) {
   const sort = ref<RepoQueryParams['sort']>('updated')
   const direction = ref<RepoQueryParams['direction']>('desc')
   const searchQuery = ref('')
+  const languageFilter = ref('')
+
+  const availableLanguages = computed(() => {
+    const langs = repos.value
+      .map((r) => r.language)
+      .filter((l): l is string => !!l)
+    return [...new Set(langs)].sort()
+  })
 
   const filteredRepos = computed(() => {
-    if (!searchQuery.value.trim()) return repos.value
-    const q = searchQuery.value.toLowerCase()
-    return repos.value.filter(
-      (r) =>
-        r.name.toLowerCase().includes(q) ||
-        (r.description && r.description.toLowerCase().includes(q)),
-    )
+    let list = repos.value
+    if (searchQuery.value.trim()) {
+      const q = searchQuery.value.toLowerCase()
+      list = list.filter(
+        (r) =>
+          r.name.toLowerCase().includes(q) ||
+          (r.description && r.description.toLowerCase().includes(q)),
+      )
+    }
+    if (languageFilter.value) {
+      list = list.filter((r) => r.language === languageFilter.value)
+    }
+    return list
   })
+
+  const totalStars = computed(() =>
+    repos.value.reduce((sum, r) => sum + r.stargazers_count, 0),
+  )
 
   async function fetchRepos(reset = false) {
     if (reset) {
@@ -67,12 +85,15 @@ export function useRepos(username: () => string) {
   return {
     repos,
     filteredRepos,
+    availableLanguages,
+    totalStars,
     loading,
     error,
     page,
     hasMore,
     sort,
     searchQuery,
+    languageFilter,
     fetchRepos,
     loadMore,
     changeSort,

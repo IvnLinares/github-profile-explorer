@@ -66,3 +66,25 @@ export interface RepoQueryParams {
   sort?: 'stars' | 'forks' | 'updated' | 'full_name'
   direction?: 'asc' | 'desc'
 }
+
+/** A single public event from GET /users/{username}/events/public */
+export interface GitHubEvent {
+  id: string
+  type: string
+  created_at: string
+  repo: {
+    id: number
+    name: string
+    url: string
+  }
+  payload: {
+    action?: string
+    ref?: string
+    ref_type?: string
+    commits?: Array<{ message: string; sha: string }>
+    pull_request?: { title: string; html_url: string; state: string; merged: boolean }
+    issue?: { title: string; html_url: string; state: string }
+    release?: { tag_name: string; html_url: string; name: string | null }
+    forkee?: { full_name: string; html_url: string }
+  }
+}

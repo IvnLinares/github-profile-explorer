@@ -40,7 +40,7 @@ function formatDate(dateStr: string): string {
     <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400">
       <span v-if="repo.language" class="flex items-center gap-1.5">
         <span class="w-2.5 h-2.5 rounded-full bg-[#0071e3] inline-block opacity-80"></span>
-        <span class="text-gray-700">{{ repo.language }}</span>
+        <span class="text-gray-700 dark:text-gray-300">{{ repo.language }}</span>
       </span>
       <span v-if="repo.stargazers_count > 0" class="flex items-center gap-1">
         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -52,6 +52,23 @@ function formatDate(dateStr: string): string {
       </span>
       <span class="ml-auto">
         Updated {{ formatDate(repo.updated_at) }}
+      </span>
+    </div>
+
+    <!-- Topics -->
+    <div v-if="repo.topics && repo.topics.length" class="flex flex-wrap gap-1.5 mt-3">
+      <span
+        v-for="topic in repo.topics.slice(0, 5)"
+        :key="topic"
+        class="text-[10px] px-2 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-medium"
+      >
+        {{ topic }}
+      </span>
+      <span
+        v-if="repo.topics.length > 5"
+        class="text-[10px] px-2 py-0.5 rounded-full bg-black/[0.06] text-gray-500"
+      >
+        +{{ repo.topics.length - 5 }}
       </span>
     </div>
   </a>

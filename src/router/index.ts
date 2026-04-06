@@ -14,6 +14,11 @@ const router = createRouter({
       name: 'profile',
       component: () => import('@/views/ProfileView.vue'),
     },
+    {
+      path: '/compare',
+      name: 'compare',
+      component: () => import('@/views/CompareView.vue'),
+    },
   ],
 })
 
