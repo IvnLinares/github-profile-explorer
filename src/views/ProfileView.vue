@@ -2,24 +2,40 @@
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProfile } from '@/composables/useProfile'
+import { useRepos } from '@/composables/useRepos'
 import ProfileCard from '@/components/ProfileCard.vue'
 import ProfileSkeleton from '@/components/ProfileSkeleton.vue'
 import ErrorState from '@/components/ErrorState.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import RepoList from '@/components/RepoList.vue'
 
 const route = useRoute()
 const router = useRouter()
 const { user, loading, error, fetchUser } = useProfile()
 
-const searchInput = ref(route.params.username as string)
+const currentUsername = ref(route.params.username as string)
+const searchInput = ref(currentUsername.value)
+
+const {
+  filteredRepos,
+  loading: reposLoading,
+  hasMore,
+  sort,
+  searchQuery,
+  fetchRepos,
+  loadMore,
+  changeSort,
+} = useRepos(() => currentUsername.value)
 
 // Fetch on route param change
 watch(
   () => route.params.username,
-  (username) => {
+  async (username) => {
     if (username && typeof username === 'string') {
+      currentUsername.value = username
       searchInput.value = username
-      fetchUser(username)
+      await fetchUser(username)
+      await fetchRepos(true)
     }
   },
   { immediate: true },
@@ -43,7 +59,26 @@ function handleSearch(username: string) {
     <!-- Error state -->
     <ErrorState v-else-if="error" :error="error" />
 
-    <!-- Profile -->
-    <ProfileCard v-else-if="user" :user="user" />
+    <!-- Profile + Repos -->
+    <template v-else-if="user">
+      <ProfileCard :user="user" />
+
+      <section>
+        <h2 class="text-xl font-semibold text-gray-100 mb-4">
+          Repositories
+          <span class="text-gray-500 text-base font-normal">({{ user.public_repos }})</span>
+        </h2>
+        <RepoList
+          :repos="filteredRepos"
+          :loading="reposLoading"
+          :has-more="hasMore"
+          :sort="sort"
+          :search-query="searchQuery"
+          @load-more="loadMore"
+          @change-sort="changeSort"
+          @update:search-query="searchQuery = $event"
+        />
+      </section>
+    </template>
   </div>
 </template>
