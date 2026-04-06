@@ -88,33 +88,34 @@ const statRows = computed(() => {
 </script>
 
 <template>
-  <div class="max-w-6xl mx-auto px-4 py-10 space-y-8">
-    <div class="text-center">
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-1">Compare Profiles</h2>
-      <p class="text-gray-500 text-sm">Side-by-side GitHub stats comparison</p>
+  <div class="max-w-6xl mx-auto px-4 py-12 space-y-10">
+    <!-- Header -->
+    <div class="text-center max-w-2xl mx-auto">
+      <h2 class="text-4xl font-bold text-gray-900 dark:text-white tracking-tight mb-3">Compare Profiles</h2>
+      <p class="text-gray-600 dark:text-gray-400 text-lg">Side-by-side GitHub stats comparison</p>
     </div>
 
     <!-- Input row -->
-    <div class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+    <div class="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
       <input
         v-model="user1Input"
         type="text"
         placeholder="First username..."
-        class="flex-1 px-4 py-2.5 rounded-xl glass-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 transition text-sm"
+        class="flex-1 px-5 py-3 rounded-xl glass-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0071e3]/50 transition text-base border border-white/40 dark:border-white/10"
         @keyup.enter="compare"
       />
-      <span class="self-center text-gray-400 font-bold hidden sm:block">vs</span>
+      <span class="self-center text-gray-400 font-bold hidden sm:block text-xl">vs</span>
       <input
         v-model="user2Input"
         type="text"
         placeholder="Second username..."
-        class="flex-1 px-4 py-2.5 rounded-xl glass-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 transition text-sm"
+        class="flex-1 px-5 py-3 rounded-xl glass-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0071e3]/50 transition text-base border border-white/40 dark:border-white/10"
         @keyup.enter="compare"
       />
       <button
         @click="compare"
         :disabled="!user1Input.trim() || !user2Input.trim()"
-        class="px-5 py-2.5 rounded-xl bg-[#0071e3] hover:bg-[#0077ed] text-white font-medium text-sm transition cursor-pointer disabled:opacity-40 shadow-[0_2px_8px_rgba(0,113,227,0.25)]"
+        class="px-7 py-3 rounded-xl bg-gradient-to-r from-[#0071e3] to-[#0056b3] hover:from-[#0077ed] hover:to-[#005fc4] text-white font-bold text-base transition-all cursor-pointer disabled:opacity-50 shadow-lg hover:shadow-[0_8px_24px_rgba(0,113,227,0.4)] disabled:shadow-none border border-[#0071e3]/50"
       >
         Compare
       </button>
@@ -137,29 +138,29 @@ const statRows = computed(() => {
       </div>
 
       <!-- Stats table -->
-      <div v-if="userA && userB" class="glass rounded-2xl overflow-hidden">
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="border-b border-black/[0.06] dark:border-white/[0.06]">
-              <th class="py-3 px-5 text-left text-gray-400 font-medium">Stat</th>
-              <th class="py-3 px-5 text-center text-[#0071e3] font-semibold">{{ userA.login }}</th>
-              <th class="py-3 px-5 text-center text-[#0071e3] font-semibold">{{ userB.login }}</th>
+      <div v-if="userA && userB" class="glass rounded-3xl overflow-hidden border border-white/40 dark:border-white/10">
+        <table class="w-full">
+          <thead class="bg-white/40 dark:bg-white/5 border-b border-black/[0.06] dark:border-white/[0.06]">
+            <tr>
+              <th class="py-4 px-6 text-left text-gray-700 dark:text-gray-300 font-semibold">Stat</th>
+              <th class="py-4 px-6 text-center text-gray-700 dark:text-gray-300 font-semibold">{{ userA.login }}</th>
+              <th class="py-4 px-6 text-center text-gray-700 dark:text-gray-300 font-semibold">{{ userB.login }}</th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="row in statRows"
               :key="row.label"
-              class="border-b border-black/[0.04] dark:border-white/[0.04] last:border-0"
+              class="border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 hover:bg-white/20 dark:hover:bg-white/5 transition-colors"
             >
-              <td class="py-3 px-5 text-gray-500">{{ row.label }}</td>
-              <td class="py-3 px-5 text-center font-semibold" :class="row.winner === 'A' ? 'text-green-600 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'">
+              <td class="py-4 px-6 text-gray-600 dark:text-gray-400 font-medium">{{ row.label }}</td>
+              <td class="py-4 px-6 text-center font-semibold text-lg" :class="row.winner === 'A' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-700 dark:text-gray-300'">
                 {{ row.a }}
-                <span v-if="row.winner === 'A'" class="text-green-500 ml-1">↑</span>
+                <span v-if="row.winner === 'A'" class="text-emerald-500 ml-2">↑</span>
               </td>
-              <td class="py-3 px-5 text-center font-semibold" :class="row.winner === 'B' ? 'text-green-600 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'">
+              <td class="py-4 px-6 text-center font-semibold text-lg" :class="row.winner === 'B' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-700 dark:text-gray-300'">
                 {{ row.b }}
-                <span v-if="row.winner === 'B'" class="text-green-500 ml-1">↑</span>
+                <span v-if="row.winner === 'B'" class="text-emerald-500 ml-2">↑</span>
               </td>
             </tr>
           </tbody>

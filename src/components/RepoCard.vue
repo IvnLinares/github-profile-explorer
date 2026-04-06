@@ -19,10 +19,10 @@ function formatDate(dateStr: string): string {
     :href="repo.html_url"
     target="_blank"
     rel="noopener noreferrer"
-    class="block glass rounded-xl p-5 hover:shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-shadow duration-200 group"
+    class="block glass rounded-2xl p-5 hover:shadow-lg hover:shadow-[#0071e3]/10 transition-shadow duration-300 group border border-white/30 dark:border-white/10 hover:border-[#0071e3]/30"
   >
-    <div class="flex items-start justify-between gap-3 mb-2">
-      <h3 class="text-[#0071e3] font-semibold group-hover:text-[#0077ed] transition-colors truncate">
+    <div class="flex items-start justify-between gap-3 mb-3">
+      <h3 class="text-lg font-semibold text-[#0071e3] group-hover:text-[#0077ed] transition-colors truncate">
         {{ repo.name }}
       </h3>
       <span
@@ -33,7 +33,7 @@ function formatDate(dateStr: string): string {
       </span>
     </div>
 
-    <p v-if="repo.description" class="text-gray-500 text-sm mb-3 line-clamp-2">
+    <p v-if="repo.description" class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
       {{ repo.description }}
     </p>
 

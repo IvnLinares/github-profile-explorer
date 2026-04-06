@@ -53,7 +53,7 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="glass rounded-2xl p-6">
+  <div class="glass rounded-3xl p-8">
     <h3 class="text-base font-semibold text-gray-900 mb-5">Languages</h3>
 
     <div v-if="stats.length" class="flex flex-col sm:flex-row items-center gap-6">

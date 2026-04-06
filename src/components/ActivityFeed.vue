@@ -86,8 +86,8 @@ function parseEvent(event: GitHubEvent): EventInfo | null {
 </script>
 
 <template>
-  <div class="glass rounded-2xl p-6 flex flex-col">
-    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-5 shrink-0">Recent Activity</h3>
+  <div class="glass rounded-3xl p-8 flex flex-col">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 shrink-0">Recent Activity</h3>
 
     <!-- Skeleton -->
     <div v-if="loading" class="space-y-3 animate-pulse">
