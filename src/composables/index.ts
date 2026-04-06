@@ -1,1 +1,1 @@
-// Composables — will be implemented in Fase 2+
+export { useProfile } from './useProfile'
