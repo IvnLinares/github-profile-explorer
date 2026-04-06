@@ -3,11 +3,13 @@ import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProfile } from '@/composables/useProfile'
 import { useRepos } from '@/composables/useRepos'
+import { useLanguages } from '@/composables/useLanguages'
 import ProfileCard from '@/components/ProfileCard.vue'
 import ProfileSkeleton from '@/components/ProfileSkeleton.vue'
 import ErrorState from '@/components/ErrorState.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import RepoList from '@/components/RepoList.vue'
+import LanguageChart from '@/components/LanguageChart.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -27,6 +29,8 @@ const {
   changeSort,
 } = useRepos(() => currentUsername.value)
 
+const { languageStats, computeFromRepos } = useLanguages()
+
 // Fetch on route param change
 watch(
   () => route.params.username,
@@ -36,6 +40,7 @@ watch(
       searchInput.value = username
       await fetchUser(username)
       await fetchRepos(true)
+      computeFromRepos(filteredRepos.value)
     }
   },
   { immediate: true },
@@ -62,6 +67,8 @@ function handleSearch(username: string) {
     <!-- Profile + Repos -->
     <template v-else-if="user">
       <ProfileCard :user="user" />
+
+      <LanguageChart :stats="languageStats" />
 
       <section>
         <h2 class="text-xl font-semibold text-gray-100 mb-4">
