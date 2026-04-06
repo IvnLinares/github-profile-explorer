@@ -1,141 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-
 interface Props {
   username: string
   content: string | null
   loading?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   loading: false,
-})
-
-// Apply inline formatting (bold, italic, links, code, images) while preserving emojis
-function applyInlineFormatting(text: string): string {
-  return (
-    text
-      // Images ![alt](url)
-      .replace(
-        /!\[(.*?)\]\((.*?)\)/g,
-        '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-4 inline-block" loading="lazy" />',
-      )
-      // Bold **text**
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900 dark:text-gray-100">$1</strong>')
-      // Italic *text* (but not within **)
-      .replace(/(?<!\*)\*([^\*]+)\*(?!\*)/g, '<em class="italic text-gray-700 dark:text-gray-300">$1</em>')
-      // Links [text](url)
-      .replace(
-        /\[(.*?)\]\((.*?)\)/g,
-        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#0071e3] hover:text-[#0077ed] underline">$1</a>',
-      )
-      // Inline code `text`
-      .replace(
-        /`([^`]+)`/g,
-        '<code class="bg-gray-200 dark:bg-gray-800 rounded px-2 py-1 font-mono text-sm text-gray-900 dark:text-gray-100">$1</code>',
-      )
-  )
-}
-
-// Enhanced markdown to HTML converter
-const htmlContent = computed(() => {
-  if (!props.content) return ''
-
-  let lines = props.content.split('\n')
-  let html = ''
-  let inCodeBlock = false
-  let codeBlockContent = ''
-  let i = 0
-
-  while (i < lines.length) {
-    let line = lines[i]
-
-    // Code blocks
-    if (line.trim().startsWith('```')) {
-      if (!inCodeBlock) {
-        inCodeBlock = true
-        codeBlockContent = ''
-      } else {
-        inCodeBlock = false
-        html += `<pre class="bg-gray-100 dark:bg-gray-900/50 rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm font-mono text-gray-800 dark:text-gray-200">${codeBlockContent
-          .split('\n')
-          .map(l => l.replace(/</g, '&lt;').replace(/>/g, '&gt;'))
-          .join('\n')}</code></pre>`
-      }
-      i++
-      continue
-    }
-
-    if (inCodeBlock) {
-      codeBlockContent += (codeBlockContent ? '\n' : '') + line
-      i++
-      continue
-    }
-
-    const trimmed = line.trim()
-
-    // Preserve raw HTML (detect <tag> patterns)
-    if (trimmed.includes('<') && trimmed.includes('>')) {
-      html += `<div class="my-4">${trimmed}</div>`
-      i++
-      continue
-    }
-
-    // Horizontal rules
-    if (/^-{3,}$/.test(trimmed)) {
-      html += '<hr class="my-6 border-0 border-t border-gray-300 dark:border-gray-700" />'
-      i++
-      continue
-    }
-
-    // Headers
-    if (/^#{1,3}\s/.test(trimmed)) {
-      const match = trimmed.match(/^(#+)\s(.*)$/)
-      if (match) {
-        const level = match[1].length
-        const text = match[2]
-        const sizes = {
-          1: 'text-3xl',
-          2: 'text-2xl',
-          3: 'text-xl',
-        }
-        const size = sizes[level as keyof typeof sizes] || 'text-lg'
-        html += `<h${level} class="${size} font-bold text-gray-900 dark:text-white mt-8 mb-4">${applyInlineFormatting(text)}</h${level}>`
-      }
-      i++
-      continue
-    }
-
-    // Empty lines
-    if (!trimmed) {
-      html += ''
-      i++
-      continue
-    }
-
-    // Lists (- or *)
-    if (/^[-*]\s/.test(trimmed)) {
-      html += `<ul class="list-disc list-inside my-4 space-y-2">`
-
-      while (i < lines.length && /^[-*]\s/.test(lines[i].trim())) {
-        const itemText = lines[i].trim().substring(2)
-        html += `<li class="text-gray-700 dark:text-gray-300 ml-2">${applyInlineFormatting(itemText)}</li>`
-        i++
-      }
-
-      html += `</ul>`
-      continue
-    }
-
-    // Regular paragraphs
-    if (trimmed) {
-      html += `<p class="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-4">${applyInlineFormatting(trimmed)}</p>`
-    }
-
-    i++
-  }
-
-  return html
 })
 </script>
 
@@ -148,15 +19,26 @@ const htmlContent = computed(() => {
     </div>
   </div>
 
-  <div v-else-if="props.content" class="glass rounded-3xl p-8">
-    <div class="flex items-center gap-2 mb-6">
-      <svg class="w-5 h-5 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-      <h3 class="text-xl font-bold text-gray-900 dark:text-white">Profile README</h3>
+  <div v-else-if="content" class="glass rounded-3xl p-8">
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Profile README</h3>
+      </div>
+      <a
+        :href="`https://github.com/${username}/${username}`"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0071e3] to-[#0056b3] hover:from-[#0077ed] hover:to-[#005fc4] text-white font-medium text-sm rounded-lg transition-all shadow-md hover:shadow-lg border border-[#0071e3]/50"
+      >
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View on GitHub
+      </a>
     </div>
-    <!-- Renderizar HTML con soporte para emojis, imágenes, badges, etc -->
-    <div v-html="htmlContent" class="readme-content overflow-x-auto"></div>
   </div>
 
   <div v-else class="glass rounded-3xl p-8 text-center">
@@ -166,7 +48,7 @@ const htmlContent = computed(() => {
       </svg>
     </div>
     <p class="text-gray-500 dark:text-gray-400">
-      No README found for
+      No profile README found for
       <strong>{{ username }}/{{ username }}</strong>
     </p>
   </div>
