@@ -83,7 +83,7 @@ function searchHint(hint: string) {
     <div class="flex gap-2 mt-4 flex-wrap justify-center">
       <span class="text-xs text-gray-400 self-center">Try:</span>
       <button
-        v-for="hint in ['torvalds', 'gaearon', 'yyx990803', 'antfu']"
+        v-for="hint in ['ivnlinares', 'github', 'torvalds', 'vuejs', 'microsoft']"
         :key="hint"
         @click="searchHint(hint)"
         class="text-xs px-3 py-1.5 rounded-full glass-sm text-gray-600 dark:text-gray-300 hover:text-[#0071e3] transition cursor-pointer"
