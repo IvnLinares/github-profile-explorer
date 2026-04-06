@@ -11,10 +11,15 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
 })
 
-// Apply inline formatting (bold, italic, links, code) while preserving emojis
+// Apply inline formatting (bold, italic, links, code, images) while preserving emojis
 function applyInlineFormatting(text: string): string {
   return (
     text
+      // Images ![alt](url)
+      .replace(
+        /!\[(.*?)\]\((.*?)\)/g,
+        '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-4 inline-block" loading="lazy" />',
+      )
       // Bold **text**
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900 dark:text-gray-100">$1</strong>')
       // Italic *text* (but not within **)
@@ -68,6 +73,13 @@ const htmlContent = computed(() => {
     }
 
     const trimmed = line.trim()
+
+    // Preserve raw HTML (detect <tag> patterns)
+    if (trimmed.includes('<') && trimmed.includes('>')) {
+      html += `<div class="my-4">${trimmed}</div>`
+      i++
+      continue
+    }
 
     // Horizontal rules
     if (/^-{3,}$/.test(trimmed)) {
@@ -143,7 +155,8 @@ const htmlContent = computed(() => {
       </svg>
       <h3 class="text-xl font-bold text-gray-900 dark:text-white">Profile README</h3>
     </div>
-    <div v-html="htmlContent" class="text-sm space-y-4"></div>
+    <!-- Renderizar HTML con soporte para emojis, imágenes, badges, etc -->
+    <div v-html="htmlContent" class="readme-content overflow-x-auto"></div>
   </div>
 
   <div v-else class="glass rounded-3xl p-8 text-center">
