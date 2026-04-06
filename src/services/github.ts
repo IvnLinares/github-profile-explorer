@@ -1,11 +1,14 @@
 import { githubFetch } from './api'
+import { sessionCache } from '@/composables/useUtils'
 import type { GitHubUser, GitHubRepo, RepoLanguages, RepoQueryParams } from '@/types'
 
 /**
  * Fetch a GitHub user profile by username.
  */
 export async function getUser(username: string): Promise<GitHubUser> {
-  return githubFetch<GitHubUser>(`/users/${encodeURIComponent(username)}`)
+  return sessionCache(`user:${username}`, () =>
+    githubFetch<GitHubUser>(`/users/${encodeURIComponent(username)}`),
+  )
 }
 
 /**
@@ -23,8 +26,11 @@ export async function getRepos(
     sort,
     direction,
   })
-  return githubFetch<GitHubRepo[]>(
-    `/users/${encodeURIComponent(username)}/repos?${query}`,
+  const cacheKey = `repos:${username}:${query}`
+  return sessionCache(cacheKey, () =>
+    githubFetch<GitHubRepo[]>(
+      `/users/${encodeURIComponent(username)}/repos?${query}`,
+    ),
   )
 }
 
@@ -35,7 +41,9 @@ export async function getRepoLanguages(
   owner: string,
   repo: string,
 ): Promise<RepoLanguages> {
-  return githubFetch<RepoLanguages>(
-    `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/languages`,
+  return sessionCache(`langs:${owner}/${repo}`, () =>
+    githubFetch<RepoLanguages>(
+      `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/languages`,
+    ),
   )
 }

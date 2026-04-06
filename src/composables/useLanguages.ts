@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import type { GitHubRepo, LanguageStat } from '@/types'
 
 // GitHub-ish colors for common languages
