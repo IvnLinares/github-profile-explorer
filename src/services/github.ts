@@ -58,3 +58,28 @@ export async function getActivity(username: string): Promise<GitHubEvent[]> {
     ),
   )
 }
+
+/**
+ * Fetch the README.md content from a user's profile repo ({username}/{username})
+ * Returns markdown string or null if no README found
+ */
+export async function getProfileReadme(username: string): Promise<string | null> {
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${encodeURIComponent(username)}/${encodeURIComponent(username)}/readme`,
+      {
+        headers: {
+          Accept: 'application/vnd.github.v3.raw',
+        },
+      },
+    )
+
+    if (!response.ok) {
+      return null
+    }
+
+    return await response.text()
+  } catch {
+    return null
+  }
+}

@@ -6,12 +6,16 @@ const BASE_URL = 'https://api.github.com'
  * Normalized fetch wrapper for GitHub API.
  * Handles rate limit detection, 404s, and general errors.
  */
-export async function githubFetch<T>(endpoint: string): Promise<T> {
+export async function githubFetch<T>(
+  endpoint: string,
+  options?: { headers?: Record<string, string> },
+): Promise<T> {
   const url = `${BASE_URL}${endpoint}`
 
   const res = await fetch(url, {
     headers: {
       Accept: 'application/vnd.github.v3+json',
+      ...options?.headers,
     },
   })
 

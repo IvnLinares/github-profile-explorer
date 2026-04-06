@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { GitHubUser } from '@/types'
+import { getCountryFlag } from '@/utils/countryFlags'
 
 defineProps<{
   user: GitHubUser
@@ -41,34 +42,41 @@ defineProps<{
     </div>
 
     <!-- Meta row -->
-    <div v-if="user.location || user.company || user.blog || user.twitter_username" class="flex flex-wrap gap-4 mb-6 pb-6 border-b border-black/[0.06] dark:border-white/[0.06]">
-      <div v-if="user.location" class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-        <svg class="w-4 h-4 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        {{ user.location }}
+    <div v-if="user.location || user.company || user.blog || user.twitter_username" class="flex flex-wrap gap-5 mb-6 pb-6 border-b border-black/[0.06] dark:border-white/[0.06]">
+      <!-- Country flag + location -->
+      <div v-if="user.location" class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 font-medium">
+        <span class="text-xl">{{ getCountryFlag(user.location) }}</span>
+        <span>{{ user.location }}</span>
       </div>
-      <div v-if="user.company" class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+
+      <!-- Company -->
+      <div v-if="user.company" class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 font-medium">
         <svg class="w-4 h-4 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-        {{ user.company }}
+        <span>{{ user.company }}</span>
       </div>
+
+      <!-- Website link -->
       <a
         v-if="user.blog"
         :href="user.blog.startsWith('http') ? user.blog : `https://${user.blog}`"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center gap-2 text-sm text-[#0071e3] hover:text-[#0077ed] transition-colors font-medium"
+        class="flex items-center gap-2 text-sm text-[#0071e3] hover:text-[#0077ed] transition-colors font-medium hover:underline"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-        Website
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+        <span class="truncate">{{ user.blog }}</span>
       </a>
+
+      <!-- Twitter link -->
       <a
         v-if="user.twitter_username"
         :href="`https://twitter.com/${user.twitter_username}`"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center gap-2 text-sm text-[#0071e3] hover:text-[#0077ed] transition-colors font-medium"
+        class="flex items-center gap-2 text-sm text-[#0071e3] hover:text-[#0077ed] transition-colors font-medium hover:underline"
       >
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        Twitter
+        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <span>@{{ user.twitter_username }}</span>
       </a>
     </div>
 

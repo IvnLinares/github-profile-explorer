@@ -6,6 +6,7 @@ import { useRepos } from '@/composables/useRepos'
 import { useLanguages } from '@/composables/useLanguages'
 import { useActivity } from '@/composables/useActivity'
 import { useSearchHistory } from '@/composables/useSearchHistory'
+import { useProfileReadme } from '@/composables/useProfileReadme'
 import ProfileCard from '@/components/ProfileCard.vue'
 import ProfileSkeleton from '@/components/ProfileSkeleton.vue'
 import ErrorState from '@/components/ErrorState.vue'
@@ -13,11 +14,13 @@ import SearchBar from '@/components/SearchBar.vue'
 import RepoList from '@/components/RepoList.vue'
 import LanguageChart from '@/components/LanguageChart.vue'
 import ActivityFeed from '@/components/ActivityFeed.vue'
+import ProfileReadme from '@/components/ProfileReadme.vue'
 
 const route = useRoute()
 const router = useRouter()
 const { addSearch } = useSearchHistory()
 const { user, loading, error, fetchUser } = useProfile()
+const { readme, loading: readmeLoading, fetchReadme } = useProfileReadme()
 
 const currentUsername = ref(route.params.username as string)
 const searchInput = ref(currentUsername.value)
@@ -50,6 +53,7 @@ watch(
       await fetchRepos(true)
       computeFromRepos(filteredRepos.value)
       fetchActivity(username)
+      fetchReadme(username)
     }
   },
   { immediate: true },
@@ -83,6 +87,9 @@ function handleSearch(username: string) {
         <LanguageChart :stats="languageStats" />
         <ActivityFeed :events="events" :loading="activityLoading" />
       </div>
+
+      <!-- Profile README section -->
+      <ProfileReadme :username="user.login" :content="readme" :loading="readmeLoading" />
 
       <section>
         <div class="flex items-baseline justify-between mb-4">
