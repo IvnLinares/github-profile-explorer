@@ -86,8 +86,8 @@ function parseEvent(event: GitHubEvent): EventInfo | null {
 </script>
 
 <template>
-  <div class="glass rounded-2xl p-6">
-    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-5">Recent Activity</h3>
+  <div class="glass rounded-2xl p-6 flex flex-col">
+    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-5 shrink-0">Recent Activity</h3>
 
     <!-- Skeleton -->
     <div v-if="loading" class="space-y-3 animate-pulse">
@@ -100,11 +100,11 @@ function parseEvent(event: GitHubEvent): EventInfo | null {
       </div>
     </div>
 
-    <div v-else-if="events.length" class="relative">
+    <div v-else-if="events.length" class="relative flex-1 overflow-hidden">
       <!-- Timeline line -->
       <div class="absolute left-3.5 top-0 bottom-0 w-px bg-black/[0.06] dark:bg-white/[0.1]"></div>
 
-      <div class="space-y-4">
+      <div class="space-y-4 overflow-y-auto max-h-72 pr-1" style="scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.12) transparent;">
         <div
           v-for="event in events"
           :key="event.id"

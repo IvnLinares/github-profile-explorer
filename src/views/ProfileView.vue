@@ -79,7 +79,7 @@ function handleSearch(username: string) {
       <ProfileCard :user="user" :total-stars="totalStars" />
 
       <!-- Two-column layout for chart + activity -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <LanguageChart :stats="languageStats" />
         <ActivityFeed :events="events" :loading="activityLoading" />
       </div>
