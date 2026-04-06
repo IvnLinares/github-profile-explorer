@@ -11,31 +11,117 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
 })
 
-// Simple markdown to HTML converter for basic formatting
+// Apply inline formatting (bold, italic, links, code) while preserving emojis
+function applyInlineFormatting(text: string): string {
+  return (
+    text
+      // Bold **text**
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900 dark:text-gray-100">$1</strong>')
+      // Italic *text* (but not within **)
+      .replace(/(?<!\*)\*([^\*]+)\*(?!\*)/g, '<em class="italic text-gray-700 dark:text-gray-300">$1</em>')
+      // Links [text](url)
+      .replace(
+        /\[(.*?)\]\((.*?)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#0071e3] hover:text-[#0077ed] underline">$1</a>',
+      )
+      // Inline code `text`
+      .replace(
+        /`([^`]+)`/g,
+        '<code class="bg-gray-200 dark:bg-gray-800 rounded px-2 py-1 font-mono text-sm text-gray-900 dark:text-gray-100">$1</code>',
+      )
+  )
+}
+
+// Enhanced markdown to HTML converter
 const htmlContent = computed(() => {
   if (!props.content) return ''
 
-  let html = props.content
-    // Headers
-    .replace(/^### (.*?)$/gm, '<h3 class="text-xl font-bold text-gray-900 dark:text-white mt-6 mb-3">$1</h3>')
-    .replace(/^## (.*?)$/gm, '<h2 class="text-2xl font-bold text-gray-900 dark:text-white mt-8 mb-4">$1</h2>')
-    .replace(/^# (.*?)$/gm, '<h1 class="text-3xl font-bold text-gray-900 dark:text-white mt-8 mb-4">$1</h1>')
-    // Bold
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900 dark:text-gray-100">$1</strong>')
-    // Italic
-    .replace(/\*(.*?)\*/g, '<em class="italic text-gray-700 dark:text-gray-300">$1</em>')
-    // Links
-    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#0071e3] hover:text-[#0077ed] underline">$1</a>')
+  let lines = props.content.split('\n')
+  let html = ''
+  let inCodeBlock = false
+  let codeBlockContent = ''
+  let i = 0
+
+  while (i < lines.length) {
+    let line = lines[i]
+
     // Code blocks
-    .replace(/```(.*?)```/gs, '<pre class="bg-gray-100 dark:bg-gray-900/50 rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm font-mono text-gray-800 dark:text-gray-200">$1</code></pre>')
-    // Inline code
-    .replace(/`(.*?)`/g, '<code class="bg-gray-200 dark:bg-gray-800 rounded px-2 py-1 font-mono text-sm text-gray-900 dark:text-gray-100">$1</code>')
-    // Paragraphs
-    .split('\n\n')
-    .map((p: string) => p.trim())
-    .filter((p: string) => p.length > 0 && !p.startsWith('<'))
-    .map((p: string) => `<p class="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-4">${p}</p>`)
-    .join('')
+    if (line.trim().startsWith('```')) {
+      if (!inCodeBlock) {
+        inCodeBlock = true
+        codeBlockContent = ''
+      } else {
+        inCodeBlock = false
+        html += `<pre class="bg-gray-100 dark:bg-gray-900/50 rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm font-mono text-gray-800 dark:text-gray-200">${codeBlockContent
+          .split('\n')
+          .map(l => l.replace(/</g, '&lt;').replace(/>/g, '&gt;'))
+          .join('\n')}</code></pre>`
+      }
+      i++
+      continue
+    }
+
+    if (inCodeBlock) {
+      codeBlockContent += (codeBlockContent ? '\n' : '') + line
+      i++
+      continue
+    }
+
+    const trimmed = line.trim()
+
+    // Horizontal rules
+    if (/^-{3,}$/.test(trimmed)) {
+      html += '<hr class="my-6 border-0 border-t border-gray-300 dark:border-gray-700" />'
+      i++
+      continue
+    }
+
+    // Headers
+    if (/^#{1,3}\s/.test(trimmed)) {
+      const match = trimmed.match(/^(#+)\s(.*)$/)
+      if (match) {
+        const level = match[1].length
+        const text = match[2]
+        const sizes = {
+          1: 'text-3xl',
+          2: 'text-2xl',
+          3: 'text-xl',
+        }
+        const size = sizes[level as keyof typeof sizes] || 'text-lg'
+        html += `<h${level} class="${size} font-bold text-gray-900 dark:text-white mt-8 mb-4">${applyInlineFormatting(text)}</h${level}>`
+      }
+      i++
+      continue
+    }
+
+    // Empty lines
+    if (!trimmed) {
+      html += ''
+      i++
+      continue
+    }
+
+    // Lists (- or *)
+    if (/^[-*]\s/.test(trimmed)) {
+      html += `<ul class="list-disc list-inside my-4 space-y-2">`
+
+      while (i < lines.length && /^[-*]\s/.test(lines[i].trim())) {
+        const itemText = lines[i].trim().substring(2)
+        html += `<li class="text-gray-700 dark:text-gray-300 ml-2">${applyInlineFormatting(itemText)}</li>`
+        i++
+      }
+
+      html += `</ul>`
+      continue
+    }
+
+    // Regular paragraphs
+    if (trimmed) {
+      html += `<p class="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-4">${applyInlineFormatting(trimmed)}</p>`
+    }
+
+    i++
+  }
 
   return html
 })
@@ -50,14 +136,14 @@ const htmlContent = computed(() => {
     </div>
   </div>
 
-  <div v-else-if="content" class="glass rounded-3xl p-8 prose dark:prose-invert max-w-none">
+  <div v-else-if="props.content" class="glass rounded-3xl p-8">
     <div class="flex items-center gap-2 mb-6">
       <svg class="w-5 h-5 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
       <h3 class="text-xl font-bold text-gray-900 dark:text-white">Profile README</h3>
     </div>
-    <div v-html="htmlContent" class="prose-sm"></div>
+    <div v-html="htmlContent" class="text-sm space-y-4"></div>
   </div>
 
   <div v-else class="glass rounded-3xl p-8 text-center">
