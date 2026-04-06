@@ -7,14 +7,14 @@ defineProps<{
 </script>
 
 <template>
-  <div class="bg-surface-2 rounded-2xl border border-red-500/20 p-8 text-center">
+  <div class="glass rounded-2xl p-10 text-center">
     <div class="text-4xl mb-4">
       {{ error.isNotFound ? '🔍' : error.isRateLimit ? '⏱️' : '⚠️' }}
     </div>
-    <h3 class="text-xl font-semibold text-gray-100 mb-2">
+    <h3 class="text-lg font-semibold text-gray-900 mb-1.5">
       {{ error.isNotFound ? 'User Not Found' : error.isRateLimit ? 'Rate Limit Exceeded' : 'Something went wrong' }}
     </h3>
-    <p class="text-gray-400 max-w-md mx-auto">
+    <p class="text-gray-500 text-sm max-w-sm mx-auto leading-relaxed">
       {{ error.message }}
     </p>
   </div>

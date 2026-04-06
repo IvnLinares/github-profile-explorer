@@ -71,7 +71,7 @@ function handleSearch(username: string) {
       <LanguageChart :stats="languageStats" />
 
       <section>
-        <h2 class="text-xl font-semibold text-gray-100 mb-4">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">
           Repositories
           <span class="text-gray-500 text-base font-normal">({{ user.public_repos }})</span>
         </h2>

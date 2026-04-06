@@ -34,17 +34,17 @@ const sortOptions: { value: RepoQueryParams['sort']; label: string }[] = [
         type="text"
         placeholder="Search repositories..."
         aria-label="Search repositories"
-        class="flex-1 px-4 py-2 rounded-lg bg-surface-2 border border-white/10 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition text-sm"
+        class="flex-1 px-4 py-2 rounded-xl glass-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 transition text-sm"
       />
-      <div class="flex gap-2">
+      <div class="flex gap-2 flex-wrap">
         <button
           v-for="opt in sortOptions"
           :key="opt.value"
           @click="emit('changeSort', opt.value)"
-          class="px-3 py-2 rounded-lg text-xs font-medium transition cursor-pointer"
+          class="px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer"
           :class="sort === opt.value
-            ? 'bg-brand-600 text-white'
-            : 'bg-surface-2 text-gray-400 hover:bg-surface-3 border border-white/10'"
+            ? 'bg-[#0071e3] text-white shadow-[0_2px_8px_rgba(0,113,227,0.25)]'
+            : 'bg-black/[0.06] text-gray-700 hover:bg-black/[0.1]'"
         >
           {{ opt.label }}
         </button>
@@ -56,7 +56,7 @@ const sortOptions: { value: RepoQueryParams['sort']; label: string }[] = [
       <RepoCard v-for="repo in repos" :key="repo.id" :repo="repo" />
     </div>
 
-    <p v-else-if="!loading" class="text-gray-500 text-center py-8">
+    <p v-else-if="!loading" class="text-gray-400 text-center py-8 text-sm">
       {{ searchQuery ? 'No repositories match your search.' : 'No repositories found.' }}
     </p>
 
@@ -65,7 +65,7 @@ const sortOptions: { value: RepoQueryParams['sort']; label: string }[] = [
       <button
         @click="emit('loadMore')"
         :disabled="loading"
-        class="px-6 py-2 rounded-xl bg-surface-2 border border-white/10 text-gray-300 hover:bg-surface-3 transition text-sm cursor-pointer disabled:opacity-50"
+        class="px-6 py-2 rounded-xl glass-sm text-gray-600 hover:shadow-sm transition text-sm cursor-pointer disabled:opacity-50"
       >
         {{ loading ? 'Loading...' : 'Load more repositories' }}
       </button>

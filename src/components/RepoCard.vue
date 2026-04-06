@@ -19,34 +19,36 @@ function formatDate(dateStr: string): string {
     :href="repo.html_url"
     target="_blank"
     rel="noopener noreferrer"
-    class="block bg-surface-2 rounded-xl border border-white/10 p-5 hover:border-brand-500/30 hover:bg-surface-3 transition group"
+    class="block glass rounded-xl p-5 hover:shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-shadow duration-200 group"
   >
     <div class="flex items-start justify-between gap-3 mb-2">
-      <h3 class="text-brand-400 font-semibold group-hover:text-brand-300 transition truncate">
+      <h3 class="text-[#0071e3] font-semibold group-hover:text-[#0077ed] transition-colors truncate">
         {{ repo.name }}
       </h3>
       <span
         v-if="repo.fork"
-        class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-400 shrink-0"
+        class="text-xs px-2 py-0.5 rounded-full bg-black/[0.06] text-gray-500 shrink-0"
       >
         Fork
       </span>
     </div>
 
-    <p v-if="repo.description" class="text-gray-400 text-sm mb-3 line-clamp-2">
+    <p v-if="repo.description" class="text-gray-500 text-sm mb-3 line-clamp-2">
       {{ repo.description }}
     </p>
 
-    <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500">
-      <span v-if="repo.language" class="flex items-center gap-1">
-        <span class="w-3 h-3 rounded-full bg-brand-500 inline-block"></span>
-        {{ repo.language }}
+    <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+      <span v-if="repo.language" class="flex items-center gap-1.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#0071e3] inline-block opacity-80"></span>
+        <span class="text-gray-700">{{ repo.language }}</span>
       </span>
       <span v-if="repo.stargazers_count > 0" class="flex items-center gap-1">
-        ⭐ {{ repo.stargazers_count }}
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        {{ repo.stargazers_count.toLocaleString() }}
       </span>
       <span v-if="repo.forks_count > 0" class="flex items-center gap-1">
-        🍴 {{ repo.forks_count }}
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 3a3 3 0 0 0-1 5.83V10a5 5 0 0 0 5 5h1v1.17a3 3 0 1 0 2 0V15h1a5 5 0 0 0 5-5V8.83A3 3 0 0 0 18 3a3 3 0 0 0-1 5.83V10a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3V8.83A3 3 0 0 0 6 3z"/></svg>
+        {{ repo.forks_count.toLocaleString() }}
       </span>
       <span class="ml-auto">
         Updated {{ formatDate(repo.updated_at) }}
